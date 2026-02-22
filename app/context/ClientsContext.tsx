@@ -1,7 +1,9 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Client, Takedown } from "@/app/types/client";
+import { Client } from "@/app/types/client";
+import { Takedown } from "@/app/types/takedown";
+import { withTimestamp } from "@/lib/utils";
 
 type ClientsContextValue = {
   clients: Client[];
@@ -41,6 +43,7 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
       createdAt: now,
       updatedAt: now,
       status: "pending",
+      history: [withTimestamp("Created by Admin")],
     };
     setClients((prev) =>
       prev.map((c) =>

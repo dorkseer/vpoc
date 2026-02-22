@@ -1,11 +1,4 @@
-export type Takedown = {
-  id: string;
-  contentUrl: string;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  status: string;
-};
+import { Takedown } from "./takedown";
 
 export type Client = {
   id: string;
