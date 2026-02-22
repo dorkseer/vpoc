@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased bg-gray-50`}>
+      <body className={`${geistSans.variable} antialiased bg-background`}>
         <Providers>
           <Sidebar />
           <TopBar />
