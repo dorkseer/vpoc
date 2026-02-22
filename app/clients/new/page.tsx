@@ -32,7 +32,7 @@ export default function NewClientPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Create New Client</h1>
+      <h1 className="text-2xl font-semibold text-foreground mb-6">Create New Client</h1>
 
       <Card>
         <CardContent className="pt-6">

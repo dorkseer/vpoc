@@ -19,7 +19,7 @@ export default function TakedownsPage() {
   if (!selectedClient) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-gray-800 mb-6">Takedowns</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6">Takedowns</h1>
         <p className="text-sm text-muted-foreground">Select a client to view takedowns.</p>
       </div>
     );
@@ -29,7 +29,7 @@ export default function TakedownsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Takedowns</h1>
+      <h1 className="text-2xl font-semibold text-foreground mb-6">Takedowns</h1>
 
       {takedowns.length === 0 ? (
         <p className="text-sm text-muted-foreground">No takedowns for this client.</p>

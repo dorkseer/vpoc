@@ -19,13 +19,13 @@ export default function TopBar() {
   const hideDropdown = pathname === "/clients/new";
 
   return (
-    <header className="fixed top-0 left-56 right-0 h-14 bg-white border-b border-gray-200 flex items-center justify-end gap-4 px-6 z-10">
+    <header className="fixed top-0 left-56 right-0 h-14 bg-background border-b border-border flex items-center justify-end gap-4 px-6 z-10">
       {!hideDropdown && (
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-1.5">
-                {selectedClient ? selectedClient.fullName : "Clients"}
+                {selectedClient ? `${selectedClient.publicName} (${selectedClient.fullName})` : "Clients"}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -43,7 +43,7 @@ export default function TopBar() {
                       selectedClient?.id === client.id ? "font-medium bg-accent" : ""
                     }
                   >
-                    {client.fullName}
+                    {client.publicName} ({client.fullName})
                   </DropdownMenuItem>
                 ))
               )}

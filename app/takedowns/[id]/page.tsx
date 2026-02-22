@@ -16,8 +16,8 @@ export default function TakedownDetailsPage() {
   if (!takedown) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-gray-800 mb-6">Takedown Details</h1>
-        <p className="text-sm text-gray-400">Takedown not found.</p>
+        <h1 className="text-2xl font-semibold text-foreground mb-6">Takedown Details</h1>
+        <p className="text-sm text-muted-foreground">Takedown not found.</p>
       </div>
     );
   }
@@ -30,7 +30,7 @@ export default function TakedownDetailsPage() {
           Back
         </Link>
       </Button>
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Takedown Details</h1>
+      <h1 className="text-2xl font-semibold text-foreground mb-6">Takedown Details</h1>
 
       <div className="flex flex-col gap-4">
         <Card>
@@ -62,7 +62,7 @@ export default function TakedownDetailsPage() {
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Content URL</dt>
                   <dd className="mt-0.5 text-sm break-all">
-                    <a href={takedown.contentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">{takedown.contentUrl}</a>
+                    <a href={takedown.contentUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">{takedown.contentUrl}</a>
                   </dd>
                 </div>
                 <div>
@@ -121,7 +121,7 @@ export default function TakedownDetailsPage() {
             <CardTitle>Takedown Notice</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="border rounded-md p-6 bg-white text-sm leading-relaxed space-y-4 font-serif">
+            <div className="border border-border rounded-md p-6 bg-muted text-foreground text-sm leading-relaxed space-y-4 font-serif">
               <div className="text-right text-muted-foreground">
                 <p>Date: {takedown.createdAt.toLocaleDateString()}</p>
                 <p>Reference No: {takedown.id.slice(0, 8).toUpperCase()}</p>
@@ -154,7 +154,7 @@ export default function TakedownDetailsPage() {
 
               <div className="space-y-1">
                 <p className="font-semibold">Infringing Material:</p>
-                <p className="break-all text-blue-600 underline">{takedown.contentUrl}</p>
+                <p className="break-all text-primary underline">{takedown.contentUrl}</p>
               </div>
 
               <p>
