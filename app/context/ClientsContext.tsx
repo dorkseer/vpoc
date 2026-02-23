@@ -11,6 +11,7 @@ type ClientsContextValue = {
   selectClient: (id: string) => void;
   addClient: (client: Omit<Client, "id" | "takedowns">) => Client;
   addTakedown: (data: Pick<Takedown, "contentUrl" | "notes">) => Takedown | null;
+  updateClient: (id: string, data: Omit<Client, "id" | "takedowns">) => void;
   getClient: (id: string) => Client | undefined;
 };
 
@@ -33,6 +34,7 @@ const DUMMY_CLIENTS: Client[] = [
         createdAt: new Date("2026-01-15T10:30:00"),
         updatedAt: new Date("2026-02-10T14:22:00"),
         status: "in_progress",
+        createdBy: "Admin",
         history: [
           "Created by Admin at 1/15/2026, 10:30:00 AM",
           "Notice drafted by Admin at 1/16/2026, 9:00:00 AM",
@@ -49,6 +51,7 @@ const DUMMY_CLIENTS: Client[] = [
         createdAt: new Date("2026-02-05T08:45:00"),
         updatedAt: new Date("2026-02-18T16:05:00"),
         status: "resolved",
+        createdBy: "Admin",
         history: [
           "Created by Admin at 2/5/2026, 8:45:00 AM",
           "Notice drafted by Admin at 2/6/2026, 10:00:00 AM",
@@ -93,6 +96,7 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
       createdAt: now,
       updatedAt: now,
       status: "pending",
+      createdBy: "Admin",
       history: [withTimestamp("Created by Admin")],
     };
     setClients((prev) =>
@@ -105,6 +109,14 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
     return newTakedown;
   }
 
+  function updateClient(id: string, data: Omit<Client, "id" | "takedowns">) {
+    setClients((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, ...data } : c
+      )
+    );
+  }
+
   function selectClient(id: string) {
     setSelectedClientId(id);
   }
@@ -114,7 +126,7 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ClientsContext.Provider value={{ clients, selectedClient, selectClient, addClient, addTakedown, getClient }}>
+    <ClientsContext.Provider value={{ clients, selectedClient, selectClient, addClient, addTakedown, updateClient, getClient }}>
       {children}
     </ClientsContext.Provider>
   );

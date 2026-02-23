@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useClients } from "@/app/context/ClientsContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/app/components/ui/card";
@@ -22,15 +22,34 @@ const SOCIAL_PLATFORMS: { key: keyof SocialMediaLinks; label: string; placeholde
   { key: "reddit", label: "Reddit", placeholder: "https://reddit.com/user/username" },
 ];
 
-export default function NewClientPage() {
+export default function EditClientPage() {
   const router = useRouter();
-  const { addClient } = useClients();
+  const { selectedClient, updateClient } = useClients();
 
   const [fullName, setFullName] = useState("");
   const [publicName, setPublicName] = useState("");
   const [email, setEmail] = useState("");
   const [managementCompany, setManagementCompany] = useState("");
   const [socialMedia, setSocialMedia] = useState<SocialMediaLinks>({});
+
+  useEffect(() => {
+    if (selectedClient) {
+      setFullName(selectedClient.fullName);
+      setPublicName(selectedClient.publicName);
+      setEmail(selectedClient.email);
+      setManagementCompany(selectedClient.managementCompany ?? "");
+      setSocialMedia(selectedClient.socialMedia ?? {});
+    }
+  }, [selectedClient]);
+
+  if (!selectedClient) {
+    return (
+      <div className="max-w-2xl">
+        <h1 className="text-2xl font-semibold text-foreground mb-6">Edit Client Details</h1>
+        <p className="text-sm text-muted-foreground">Select a client first.</p>
+      </div>
+    );
+  }
 
   function handleSocialChange(key: keyof SocialMediaLinks, value: string) {
     setSocialMedia((prev) => ({ ...prev, [key]: value }));
@@ -41,7 +60,7 @@ export default function NewClientPage() {
 
     const hasAnySocial = Object.values(socialMedia).some((v) => v);
 
-    addClient({
+    updateClient(selectedClient!.id, {
       fullName,
       publicName,
       email,
@@ -54,7 +73,7 @@ export default function NewClientPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold text-foreground mb-6">Create New Client</h1>
+      <h1 className="text-2xl font-semibold text-foreground mb-6">Edit Client Details</h1>
 
       <Card>
         <CardContent className="pt-6">
@@ -140,7 +159,7 @@ export default function NewClientPage() {
       </Card>
 
       <div className="flex justify-end pt-4">
-        <Button type="submit" form="client-form">Create client</Button>
+        <Button type="submit" form="client-form">Save changes</Button>
       </div>
     </div>
   );

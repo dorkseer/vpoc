@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useClients } from "@/app/context/ClientsContext";
 
 const navItems = [
   { label: "Alerts", href: "/alerts" },
@@ -11,6 +12,9 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { selectedClient } = useClients();
+
+  const showEditClient = selectedClient && pathname !== "/clients/new";
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-56 bg-sidebar flex flex-col">
@@ -35,6 +39,20 @@ export default function Sidebar() {
           );
         })}
       </nav>
+      {showEditClient && (
+        <div className="p-3 border-t border-sidebar-border">
+          <Link
+            href="/clients/edit"
+            className={`block px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
+              pathname === "/clients/edit"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            }`}
+          >
+            Edit Client Details
+          </Link>
+        </div>
+      )}
     </aside>
   );
 }

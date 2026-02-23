@@ -49,7 +49,13 @@ export default function TakedownDetailsPage() {
             <CardTitle>Takedown Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-3 gap-8">
+              <dl className="flex flex-col gap-4">
+                <div>
+                  <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created By</dt>
+                  <dd className="mt-0.5 text-sm">{takedown.createdBy}</dd>
+                </div>
+              </dl>
               <dl className="flex flex-col gap-4">
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created At</dt>

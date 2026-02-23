@@ -6,5 +6,19 @@ export type Client = {
   publicName: string;
   email: string;
   managementCompany?: string;
+  socialMedia?: SocialMediaLinks;
   takedowns: Takedown[];
+};
+
+export type SocialMediaLinks = {
+  facebook?: string;
+  instagram?: string;
+  x?: string;
+  youtube?: string;
+  tiktok?: string;
+  linkedin?: string;
+  spotify?: string;
+  soundcloud?: string;
+  twitch?: string;
+  reddit?: string;
 };

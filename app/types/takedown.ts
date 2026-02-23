@@ -12,6 +12,7 @@ export type Takedown = {
   createdAt: Date;
   updatedAt: Date;
   status: string;
+  createdBy: string;
   history: string[];
   complianceDetails?: ComplianceDetails;
 };
