@@ -11,6 +11,14 @@ import {
   TableCell,
 } from "@/app/components/ui/table";
 import { Badge } from "@/app/components/ui/badge";
+import { TakedownStatus } from "@/app/types/takedown";
+
+const STATUS_BADGE_CONFIG: Record<TakedownStatus, { label: string; variant: "secondary" | "outline" | "default" | "destructive" }> = {
+  drafting: { label: "Drafting", variant: "secondary" },
+  pending_review: { label: "Pending Review", variant: "outline" },
+  notice_sent: { label: "Notice Sent", variant: "default" },
+  notice_denied: { label: "Notice Denied", variant: "destructive" },
+};
 
 export default function TakedownsPage() {
   const router = useRouter();
@@ -54,7 +62,9 @@ export default function TakedownsPage() {
                   <TableCell className="font-mono text-xs">{takedown.id}</TableCell>
                   <TableCell>{takedown.updatedAt.toLocaleString()}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{takedown.status}</Badge>
+                    <Badge variant={STATUS_BADGE_CONFIG[takedown.status].variant}>
+                      {STATUS_BADGE_CONFIG[takedown.status].label}
+                    </Badge>
                   </TableCell>
                   <TableCell>{takedown.createdAt.toLocaleString()}</TableCell>
                 </TableRow>

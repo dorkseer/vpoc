@@ -6,10 +6,20 @@ import { ArrowLeft } from "lucide-react";
 import { useClients } from "@/app/context/ClientsContext";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/app/components/ui/card";
+import { Badge } from "@/app/components/ui/badge";
+import { TakedownStatus } from "@/app/types/takedown";
+import UserPromptCard from "@/app/components/UserPromptCard";
+
+const STATUS_BADGE_CONFIG: Record<TakedownStatus, { label: string; variant: "secondary" | "outline" | "default" | "destructive" }> = {
+  drafting: { label: "Drafting", variant: "secondary" },
+  pending_review: { label: "Pending Review", variant: "outline" },
+  notice_sent: { label: "Notice Sent", variant: "default" },
+  notice_denied: { label: "Notice Denied", variant: "destructive" },
+};
 
 export default function TakedownDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const { selectedClient } = useClients();
+  const { selectedClient, updateTakedownStatus } = useClients();
 
   const takedown = selectedClient?.takedowns.find((t) => t.id === id);
 
@@ -33,6 +43,15 @@ export default function TakedownDetailsPage() {
       <h1 className="text-2xl font-semibold text-foreground mb-6">Takedown Details</h1>
 
       <div className="flex flex-col gap-4">
+{takedown.status === "pending_review" && (
+          <UserPromptCard
+            header="Action Required"
+            body="Our system has drafted a takedown notice for this case and it is ready for your review. Would you like to approve and send the notice to the content host?"
+            onConfirm={() => updateTakedownStatus(takedown.id, "notice_sent")}
+            onDeny={() => updateTakedownStatus(takedown.id, "notice_denied")}
+          />
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Executive Summary</CardTitle>
@@ -54,6 +73,18 @@ export default function TakedownDetailsPage() {
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created By</dt>
                   <dd className="mt-0.5 text-sm">{takedown.createdBy}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Status</dt>
+                  <dd className="mt-0.5">
+                    <Badge
+                      variant={STATUS_BADGE_CONFIG[takedown.status].variant}
+                      className={takedown.status === "drafting" ? "cursor-pointer" : ""}
+                      onClick={takedown.status === "drafting" ? () => updateTakedownStatus(takedown.id, "pending_review") : undefined}
+                    >
+                      {STATUS_BADGE_CONFIG[takedown.status].label}
+                    </Badge>
+                  </dd>
                 </div>
               </dl>
               <dl className="flex flex-col gap-4">
@@ -122,7 +153,7 @@ export default function TakedownDetailsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        {takedown.status !== "drafting" && <Card>
           <CardHeader>
             <CardTitle>Takedown Notice</CardTitle>
           </CardHeader>
@@ -200,7 +231,7 @@ export default function TakedownDetailsPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card>}
       </div>
     </div>
   );

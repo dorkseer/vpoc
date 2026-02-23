@@ -5,13 +5,15 @@ export type ComplianceDetails = {
   complianceStatus?: string;
 };
 
+export type TakedownStatus = "drafting" | "pending_review" | "notice_sent" | "notice_denied";
+
 export type Takedown = {
   id: string;
   contentUrl: string;
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
-  status: string;
+  status: TakedownStatus;
   createdBy: string;
   history: string[];
   complianceDetails?: ComplianceDetails;

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 import { Client } from "@/app/types/client";
-import { Takedown } from "@/app/types/takedown";
+import { Takedown, TakedownStatus } from "@/app/types/takedown";
 import { withTimestamp } from "@/lib/utils";
 
 type ClientsContextValue = {
@@ -13,6 +13,7 @@ type ClientsContextValue = {
   addTakedown: (data: Pick<Takedown, "contentUrl" | "notes">) => Takedown | null;
   updateClient: (id: string, data: Omit<Client, "id" | "takedowns">) => void;
   getClient: (id: string) => Client | undefined;
+  updateTakedownStatus: (takedownId: string, newStatus: TakedownStatus) => void;
 };
 
 const ClientsContext = createContext<ClientsContextValue | null>(null);
@@ -33,16 +34,14 @@ const DUMMY_CLIENTS: Client[] = [
         notes: "Unauthorized re-upload of original music video.",
         createdAt: new Date("2026-01-15T10:30:00"),
         updatedAt: new Date("2026-02-10T14:22:00"),
-        status: "in_progress",
+        status: "pending_review",
         createdBy: "Admin",
         history: [
-          "Created by Admin at 1/15/2026, 10:30:00 AM",
-          "Notice drafted by Admin at 1/16/2026, 9:00:00 AM",
-          "Notice sent to platform at 1/17/2026, 11:15:00 AM",
+          "Takedown created by System at 1/15/2026, 10:30:00 AM",
+          "Takedown notice drafted at 1/16/2026, 9:00:00 AM",
         ],
         complianceDetails: {
           draftedAt: new Date("2026-01-16T09:00:00"),
-          sentAt: new Date("2026-01-17T11:15:00"),
         },
       },
       {
@@ -50,13 +49,12 @@ const DUMMY_CLIENTS: Client[] = [
         contentUrl: "https://example.com/pirated-content-2",
         createdAt: new Date("2026-02-05T08:45:00"),
         updatedAt: new Date("2026-02-18T16:05:00"),
-        status: "resolved",
+        status: "notice_sent",
         createdBy: "Admin",
         history: [
-          "Created by Admin at 2/5/2026, 8:45:00 AM",
-          "Notice drafted by Admin at 2/6/2026, 10:00:00 AM",
-          "Notice sent to platform at 2/7/2026, 2:30:00 PM",
-          "Platform confirmed removal at 2/18/2026, 4:05:00 PM",
+          "Takedown created by System at 2/5/2026, 8:45:00 AM",
+          "Takedown notice drafted at 2/6/2026, 10:00:00 AM",
+          "Takedown notice approved by Admin at 2/7/2026, 2:30:00 PM",
         ],
         complianceDetails: {
           draftedAt: new Date("2026-02-06T10:00:00"),
@@ -68,6 +66,12 @@ const DUMMY_CLIENTS: Client[] = [
     ],
   },
 ];
+
+const STATUS_HISTORY_MESSAGES: Record<string, string> = {
+  pending_review: "Takedown notice drafted",
+  notice_sent: "Takedown notice approved by Admin",
+  notice_denied: "Takedown notice denied by Admin",
+};
 
 export function ClientsProvider({ children }: { children: ReactNode }) {
   const [clients, setClients] = useState<Client[]>(DUMMY_CLIENTS);
@@ -95,9 +99,9 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
       ...(data.notes ? { notes: data.notes } : {}),
       createdAt: now,
       updatedAt: now,
-      status: "pending",
+      status: "drafting",
       createdBy: "Admin",
-      history: [withTimestamp("Created by Admin")],
+      history: [withTimestamp("Takedown created by System")],
     };
     setClients((prev) =>
       prev.map((c) =>
@@ -107,6 +111,34 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
       )
     );
     return newTakedown;
+  }
+
+  function updateTakedownStatus(takedownId: string, newStatus: TakedownStatus) {
+    const now = new Date();
+    setClients((prev) =>
+      prev.map((client) => ({
+        ...client,
+        takedowns: client.takedowns.map((t) => {
+          if (t.id !== takedownId) return t;
+          const historyMessage = STATUS_HISTORY_MESSAGES[newStatus];
+          const updatedCompliance = { ...t.complianceDetails };
+          if (newStatus === "pending_review") {
+            updatedCompliance.draftedAt = now;
+          } else if (newStatus === "notice_sent") {
+            updatedCompliance.sentAt = now;
+          }
+          return {
+            ...t,
+            status: newStatus,
+            updatedAt: now,
+            history: historyMessage
+              ? [...t.history, withTimestamp(historyMessage)]
+              : t.history,
+            complianceDetails: updatedCompliance,
+          };
+        }),
+      }))
+    );
   }
 
   function updateClient(id: string, data: Omit<Client, "id" | "takedowns">) {
@@ -126,7 +158,7 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ClientsContext.Provider value={{ clients, selectedClient, selectClient, addClient, addTakedown, updateClient, getClient }}>
+    <ClientsContext.Provider value={{ clients, selectedClient, selectClient, addClient, addTakedown, updateClient, getClient, updateTakedownStatus }}>
       {children}
     </ClientsContext.Provider>
   );
